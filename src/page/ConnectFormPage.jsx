@@ -44,6 +44,7 @@ export function ConnectFormPage() {
                         else {
                             setInvalidRequest(false);
                             setInvalidRequestErrorMessage('');
+                            sendConnectRequest(userWithName['user']._id);
                         }
                     }
 

@@ -74,13 +74,23 @@ export function RootPage() {
                     setRooms([...updatedRooms]);
                 });
 
-                socket.on('send-connect-request')
+                socket.on('send-connect-request', async (from, to) => {
+                    if (from === user._id || to === user._id) {
+                        const getAllInvitations = await get({param: from}, `${baseUrl}/chat/all-invitations`);
+                        const allInvitations = [...getAllInvitations['allInvitations']];
+                        const invitations = allInvitations.filter((invitation) => invitation.to._id === user._id);
+                        const requests = allInvitations.filter((invitation) => invitation.from._id === user._id);
+                        setInvitations([...invitations]);
+                        setRequests([...requests]);
+                    }
+
+                })
             }
             return () => {
                 socket.off('message');
             }
         }
-        , [user, rooms, selectedRoom]);
+        , [user, rooms, selectedRoom, invitations]);
 
     async function sendMessage(data, roomId) {
         socket.emit('message', user._id, data, roomId);
