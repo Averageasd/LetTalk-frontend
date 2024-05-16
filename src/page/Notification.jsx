@@ -10,7 +10,7 @@ export function Notification() {
             {requests && <ul className="mt-4 h-full overflow-y-auto">
                 {requests.map((request) => {
                     const status = request.status.toLowerCase();
-                    let statusColor = '';
+                    let statusColor = 'text-amber-500';
                     if (status === 'accepted'){
                         statusColor = 'text-green-500';
                     }
@@ -19,12 +19,14 @@ export function Notification() {
                     }
                     return (
                         <li className="bg-white p-4 rounded" key={request._id}>
-                            <p>You invited {request.to.name} to join {request.room.name}</p>
+                            {request.room.type==='MULTIUSER' ?  <p>You invited {request.to.name} to join {request.room.name}</p> : <p>You sent a connection request to {request.to.name}</p>}
                             <p className={`${statusColor} font-semibold mt-2`}>{request.status.toLowerCase()}</p>
                         </li>
                     )
                 })}
             </ul>}
+
+
         </section>
     )
 }

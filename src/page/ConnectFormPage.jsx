@@ -14,6 +14,7 @@ export function ConnectFormPage() {
             setInvalidRequest,
             invalidRequestErrorMessage,
             setInvalidRequestErrorMessage,
+            isRequestSentToUser,
         } = useOutletContext();
     return (
         <section className="grow p-4">
@@ -25,24 +26,29 @@ export function ConnectFormPage() {
 
                     async function getName(e) {
                         const userWithName = await get({param: userNameConnect}, `${baseUrl}/getUser/getUserWithName`);
-                        console.log(userWithName['user']);
-                        if (user.connections.includes(userWithName['user']._id)) {
+                        console.log(userWithName);
+                        if (userWithName['status'] === 404) {
+                            setInvalidRequest(true);
+                            setInvalidRequestErrorMessage(`${userNameConnect} does not exist`);
+                        } else if (user.connections.includes(userWithName['user']._id)) {
                             setInvalidRequest(true);
                             setInvalidRequestErrorMessage(`${userNameConnect} is already in your friend list`);
                         } else if (userNameConnect === user.name) {
                             setInvalidRequest(true);
                             setInvalidRequestErrorMessage(`You cannot send request to yourself`);
-                        } else {
-                            setUserNameConnect('');
+                        }else if (isRequestSentToUser(userWithName['user']._id)) {
+                            setInvalidRequest(true);
+                            console.log('sent already');
+                            setInvalidRequestErrorMessage(`You already sent a connection request to ${userNameConnect}`);
+                        }
+                        else {
                             setInvalidRequest(false);
-                            sendConnectRequest(userWithName['user']._id);
                             setInvalidRequestErrorMessage('');
                         }
                     }
 
                     getName(e);
-                }}
-            >
+                }}>
                 <input value={userNameConnect} onChange={(e) => {
                     setUserNameConnect(e.target.value);
                 }} placeholder="User you want to connect with..." className="border-solid border-blue-500"/>

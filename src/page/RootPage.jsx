@@ -24,7 +24,6 @@ export function RootPage() {
     const [invalidRequestErrorMessage, setInvalidRequestErrorMessage] = useState('');
 
     console.log('selected room in root page ', selectedRoom);
-
     useEffect(() => {
         console.log('run use Effect');
 
@@ -148,6 +147,10 @@ export function RootPage() {
         navigate('/chat');
     }
 
+    function isRequestSentToUser(userId) {
+        return requests.find((request) => request.to._id === userId);
+    }
+
     return (
         <>
             <ToastContainer/>
@@ -202,6 +205,7 @@ export function RootPage() {
                         invitations: invitations,
                         inputMessage: inputMessage,
                         setInputMessage: setInputMessage,
+                        isRequestSentToUser: isRequestSentToUser,
                     }
                 }/>
             </main>
