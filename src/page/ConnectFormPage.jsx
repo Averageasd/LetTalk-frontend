@@ -35,10 +35,9 @@ export function ConnectFormPage() {
                         } else {
                             setUserNameConnect('');
                             setInvalidRequest(false);
-                            sendConnectRequest(userWithName._id);
+                            sendConnectRequest(userWithName['user']._id);
                             setInvalidRequestErrorMessage('');
                         }
-
                     }
 
                     getName(e);
