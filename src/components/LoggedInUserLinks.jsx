@@ -9,8 +9,8 @@ export function LoggedInUserLinks({user, closeBarAndNavigate, logout, rooms, sel
     return (
         <LinkContainer>
             <li className="flex gap-2 py-2">
-                <IconUser></IconUser>
-                <h3>{user.name}</h3>
+                <IconUser size={32}></IconUser>
+                <h3 className="text-2xl">{user.name}</h3>
             </li>
             <li
                 className="flex gap-2 py-2 hover:bg-blue-500 cursor-pointer"
