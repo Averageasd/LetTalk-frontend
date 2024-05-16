@@ -39,7 +39,7 @@ export function ConnectFormPage() {
                         }else if (isRequestSentToUser(userWithName['user']._id)) {
                             setInvalidRequest(true);
                             console.log('sent already');
-                            setInvalidRequestErrorMessage(`You already sent a connection request to ${userNameConnect}`);
+                            setInvalidRequestErrorMessage(`Waiting for response from ${userNameConnect}`);
                         }
                         else {
                             setInvalidRequest(false);

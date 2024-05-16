@@ -148,7 +148,7 @@ export function RootPage() {
     }
 
     function isRequestSentToUser(userId) {
-        return requests.find((request) => request.to._id === userId);
+        return requests.find((request) => request.to._id === userId && request.status === 'PENDING' || request.status === 'ACCEPTED');
     }
 
     return (
