@@ -5,7 +5,6 @@ import {Link} from "react-router-dom";
 export function LoggedInUserLinks({user, closeBarAndNavigate, logout, rooms, selectedRoom, chooseRoom}) {
     const directMessageRooms = rooms.filter((room) => room.roomType === 'DIRECT-MESSAGE');
     const multiUserRooms = rooms.filter((room) => room.roomType === 'MULTIUSER');
-    console.log('selected Room ', selectedRoom);
     return (
         <LinkContainer>
             <li className="flex gap-2 py-2">
@@ -31,14 +30,14 @@ export function LoggedInUserLinks({user, closeBarAndNavigate, logout, rooms, sel
                 <Link to='/connect'>Connect</Link>
             </li>
             <li
-                className="flex gap-2 py-2 hover:bg-red-500 cursor-pointer"
+                className="flex gap-2 py-2 cursor-pointer text-red-500"
                 onClick={() => {
                     closeBarAndNavigate('/signup');
                     logout();
                 }}
             >
                 <IconLogout/>
-                <Link to='/signup'>Logout</Link>
+                <Link className="text-red-500" to='/signup'>Logout</Link>
             </li>
             <li className="py-2">
                 <div className="flex gap-2">

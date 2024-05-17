@@ -28,7 +28,6 @@ export function RootPage() {
         console.log('run use Effect');
 
         async function setAuth() {
-
             const savedUserId = JSON.parse(sessionStorage.getItem('userId'));
             const token = await JSON.parse(sessionStorage.getItem('token'));
             if (savedUserId && token) {
@@ -76,7 +75,7 @@ export function RootPage() {
 
                 socket.on('send-connect-request', async (from, to) => {
                     if (from === user._id || to === user._id) {
-                        const getAllInvitations = await get({param: from}, `${baseUrl}/chat/all-invitations`);
+                        const getAllInvitations = await get({param: user._id}, `${baseUrl}/chat/all-invitations`);
                         const allInvitations = [...getAllInvitations['allInvitations']];
                         const invitations = allInvitations.filter((invitation) => invitation.to._id === user._id);
                         const requests = allInvitations.filter((invitation) => invitation.from._id === user._id);
@@ -99,6 +98,8 @@ export function RootPage() {
                         socket.emit('join-rooms', user._id);
                     }
                 });
+
+
             }
             return () => {
                 socket.off('message');
