@@ -42,7 +42,7 @@ export function Notification() {
                             {invitation.room.type==='MULTIUSER' ?  <p>{invitation.to.name} invited you to join {invitation.room.name}</p> : <p>{invitation.from.name} sent a connection request to you</p>}
                             {status === 'pending' && <div className="flex gap-2 mt-2">
                                 <button className="bg-blue-500 p-1 border-0 text-white" onClick={()=>{
-                                    socket.emit('connection-request-response',user._id, true,invitation._id);
+                                    socket.emit('connection-request-response',user._id, invitation.from._id, true,invitation._id);
                                 }}>Accept</button>
                                 <button className="border-1 p-1 bg-white border-solid border-blue-500">Decline</button>
                             </div>}
@@ -50,8 +50,6 @@ export function Notification() {
                     )
                 })}
             </ul>}
-
-
         </section>
     )
 }

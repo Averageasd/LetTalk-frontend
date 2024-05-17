@@ -83,14 +83,30 @@ export function RootPage() {
                         setInvitations([...invitations]);
                         setRequests([...requests]);
                     }
-
                 })
+
+                socket.on('connection-request-response', async (userId, toUserId, accept, invitationId) => {
+                    console.log('someone accepted request');
+                    if (userId === user._id || toUserId === user._id) {
+                        const getAllInvitations = await get({param: user._id}, `${baseUrl}/chat/all-invitations`);
+                        const allRooms = await get({param: user._id}, `${baseUrl}/chat/all-rooms`);
+                        const allInvitations = [...getAllInvitations['allInvitations']];
+                        const invitations = allInvitations.filter((invitation) => invitation.to._id === user._id);
+                        const requests = allInvitations.filter((invitation) => invitation.from._id === user._id);
+                        setInvitations([...invitations]);
+                        setRequests([...requests]);
+                        setRooms([...allRooms['allUserRooms']]);
+                        socket.emit('join-rooms', user._id);
+                    }
+                });
             }
             return () => {
                 socket.off('message');
+                socket.off('send-connect-request');
+                socket.off('connection-request-response');
             }
         }
-        , [user, rooms, selectedRoom, invitations]);
+        , [user, rooms, selectedRoom, invitations, requests]);
 
     async function sendMessage(data, roomId) {
         socket.emit('message', user._id, data, roomId);

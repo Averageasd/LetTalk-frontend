@@ -3,8 +3,8 @@ import {IconBell, IconLogout, IconServer, IconUser, IconUserPlus, IconUsersGroup
 import {Link} from "react-router-dom";
 
 export function LoggedInUserLinks({user, closeBarAndNavigate, logout, rooms, selectedRoom, chooseRoom}) {
-    const directMessageRooms = rooms.filter((room) => room.type === 'DIRECT-MESSAGE');
-    const multiUserRooms = rooms.filter((room) => room.type === 'MULTIUSER');
+    const directMessageRooms = rooms.filter((room) => room.roomType === 'DIRECT-MESSAGE');
+    const multiUserRooms = rooms.filter((room) => room.roomType === 'MULTIUSER');
     console.log('selected Room ', selectedRoom);
     return (
         <LinkContainer>

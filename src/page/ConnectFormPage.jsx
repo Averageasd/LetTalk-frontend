@@ -36,15 +36,15 @@ export function ConnectFormPage() {
                         } else if (userNameConnect === user.name) {
                             setInvalidRequest(true);
                             setInvalidRequestErrorMessage(`You cannot send request to yourself`);
-                        }else if (isRequestSentToUser(userWithName['user']._id)) {
+                        } else if (isRequestSentToUser(userWithName['user']._id)) {
                             setInvalidRequest(true);
                             console.log('sent already');
                             setInvalidRequestErrorMessage(`Waiting for response from ${userNameConnect}`);
-                        }
-                        else {
+                        } else {
                             setInvalidRequest(false);
                             setInvalidRequestErrorMessage('');
                             sendConnectRequest(userWithName['user']._id);
+                            setUserNameConnect('');
                         }
                     }
 
