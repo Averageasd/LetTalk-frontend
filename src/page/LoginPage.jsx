@@ -1,8 +1,9 @@
 import {baseUrl} from "../shared/basedUrl.js";
-import {useOutletContext} from "react-router-dom";
+import {useContext} from "react";
+import {AppData} from "../context/AppContext.jsx";
 
 export function LoginPage() {
-    const {loginHandler} = useOutletContext();
+    const {loginHandler} = useContext(AppData);
     return (
         <section className="p-4 grow">
             <form
@@ -18,7 +19,8 @@ export function LoginPage() {
                     <input name="name" type="text" placeholder="Enter your name"></input>
                     <input name="password" type="password" placeholder="Enter your password"></input>
                 </div>
-                <button type="submit" className="block w-full bg-blue-500 text-white border-none py-2 px-4">Login</button>
+                <button type="submit" className="block w-full bg-blue-500 text-white border-none py-2 px-4">Login
+                </button>
             </form>
         </section>
 

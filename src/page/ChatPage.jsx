@@ -1,11 +1,10 @@
 import {useProtectAuthRoute} from "../hook/protectAuthRoute.js";
-import {useOutletContext} from "react-router-dom";
+import {useContext} from "react";
+import {AppData} from "../context/AppContext.jsx";
 
 export function ChatPage() {
     useProtectAuthRoute();
-    const {sendMessage, selectedRoom, inputMessage, setInputMessage, user} = useOutletContext();
-
-    console.log('selected room user is in now ', selectedRoom);
+    const {sendMessage, selectedRoom, inputMessage, setInputMessage, user} = useContext(AppData);
     return (
         <section className="grow flex flex-col">
             {selectedRoom && (

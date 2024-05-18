@@ -1,182 +1,29 @@
-import {Outlet, useNavigate} from "react-router-dom";
+import {Outlet} from "react-router-dom";
 import {IconMenu2, IconSquareX} from "@tabler/icons-react";
-import {useEffect, useState} from "react";
-import {baseUrl} from "../shared/basedUrl.js";
 import {ToastContainer} from "react-toastify";
-import {get, post} from "../api/apiService.js";
-import {showToast} from "../api/toastService.js";
 import {AuthLinks} from "../components/AuthLinks.jsx";
 import {LoggedInUserLinks} from "../components/LoggedInUserLinks.jsx";
-import {socket} from "../api/socket.js";
+import {useContext} from "react";
+import {AppData} from "../context/AppContext.jsx";
+import {useChatHook} from "../hook/chatHook.js";
+import {useInitializeUserDataHook} from "../hook/initializeUserDataHook.js";
+
+// import useChatHook from "../hook/chatHook.js";
 
 export function RootPage() {
-    const navigate = useNavigate();
-    const [showNavBar, setShowNavBar] = useState(false);
-    const [user, setUser] = useState(null);
-    const [token, setToken] = useState(null);
-    const [rooms, setRooms] = useState([]);
-    const [selectedRoom, setSelectedRoom] = useState(null);
-    const [inputMessage, setInputMessage] = useState('');
-    const [invitations, setInvitations] = useState([]);
-    const [requests, setRequests] = useState([]);
-    const [userNameConnect, setUserNameConnect] = useState('');
-    const [invalidRequest, setInvalidRequest] = useState(false);
-    const [invalidRequestErrorMessage, setInvalidRequestErrorMessage] = useState('');
+    const {
+        user,
+        selectedRoom,
+        closeBarAndNavigate,
+        chooseRoom,
+        logout,
+        showNavBar,
+        setShowNavBar,
+        rooms,
+    } = useContext(AppData);
 
-    console.log('selected room in root page ', selectedRoom);
-    useEffect(() => {
-        console.log('run use Effect');
-
-        async function setAuth() {
-            const savedUserId = JSON.parse(sessionStorage.getItem('userId'));
-            const token = await JSON.parse(sessionStorage.getItem('token'));
-            if (savedUserId && token) {
-                const userWithId = await get({param: savedUserId}, `${baseUrl}/getUser`);
-                const tempRooms = await get({param: savedUserId}, `${baseUrl}/chat/all-rooms`);
-                setRooms(tempRooms['allUserRooms']);
-                setUser(userWithId['user']);
-                setToken(token);
-                const publicRoom = tempRooms['allUserRooms'].find((room) => room.name === 'public');
-                setSelectedRoom({...publicRoom});
-                const getAllInvitations = await get({param: savedUserId}, `${baseUrl}/chat/all-invitations`);
-                const allInvitations = [...getAllInvitations['allInvitations']];
-                const invitations = allInvitations.filter((invitation) => invitation.to._id === savedUserId);
-                const requests = allInvitations.filter((invitation) => invitation.from._id === savedUserId);
-                setInvitations([...invitations]);
-                setRequests([...requests]);
-                socket.connect();
-                socket.emit('join-rooms', savedUserId);
-                navigate('/chat');
-            } else {
-                navigate('/login');
-            }
-        }
-
-        setAuth();
-    }, []);
-
-    useEffect(() => {
-            if (user && token) {
-                socket.on('message', async (userId, message, roomId) => {
-                    console.log('cur selected room ', selectedRoom);
-                    const fetchAllRooms = await get({param: userId}, `${baseUrl}/chat/all-rooms`);
-                    const updatedRooms = [...fetchAllRooms['allUserRooms']];
-                    console.log('roomId of message ', message, ' is ', roomId);
-                    for (const room of updatedRooms) {
-                        if (room._id === selectedRoom._id) {
-                            console.log(room._id, selectedRoom._id);
-                            console.log('this is updated room ', room);
-                            setSelectedRoom({...room});
-                            break;
-                        }
-                    }
-                    setRooms([...updatedRooms]);
-                });
-
-                socket.on('send-connect-request', async (from, to) => {
-                    if (from === user._id || to === user._id) {
-                        const getAllInvitations = await get({param: user._id}, `${baseUrl}/chat/all-invitations`);
-                        const allInvitations = [...getAllInvitations['allInvitations']];
-                        const invitations = allInvitations.filter((invitation) => invitation.to._id === user._id);
-                        const requests = allInvitations.filter((invitation) => invitation.from._id === user._id);
-                        setInvitations([...invitations]);
-                        setRequests([...requests]);
-                    }
-                })
-
-                socket.on('connection-request-response', async (userId, toUserId, accept, invitationId) => {
-                    console.log('someone accepted request');
-                    if (userId === user._id || toUserId === user._id) {
-                        const getAllInvitations = await get({param: user._id}, `${baseUrl}/chat/all-invitations`);
-                        const allRooms = await get({param: user._id}, `${baseUrl}/chat/all-rooms`);
-                        const allInvitations = [...getAllInvitations['allInvitations']];
-                        const invitations = allInvitations.filter((invitation) => invitation.to._id === user._id);
-                        const requests = allInvitations.filter((invitation) => invitation.from._id === user._id);
-                        setInvitations([...invitations]);
-                        setRequests([...requests]);
-                        setRooms([...allRooms['allUserRooms']]);
-                        socket.emit('join-rooms', user._id);
-                    }
-                });
-
-
-            }
-            return () => {
-                socket.off('message');
-                socket.off('send-connect-request');
-                socket.off('connection-request-response');
-            }
-        }
-        , [user, rooms, selectedRoom, invitations, requests]);
-
-    async function sendMessage(data, roomId) {
-        socket.emit('message', user._id, data, roomId);
-    }
-
-    function sendConnectRequest(toUserId) {
-        socket.emit('send-connect-request', user._id, toUserId);
-    }
-
-
-    async function loginHandler(data) {
-        const auth = await post({
-            formData: data
-        }, `${baseUrl}/login`);
-        const {status, message} = auth;
-        showToast(status, message);
-        if (status === 200) {
-            setUser(auth['user']);
-            setToken(auth['token']);
-            const fetchRooms = await get({param: auth['user']._id}, `${baseUrl}/chat/all-rooms`)
-            sessionStorage.setItem('userId', JSON.stringify(auth['user']._id));
-            sessionStorage.setItem('token', JSON.stringify(auth['token']));
-            setRooms(fetchRooms['allUserRooms']);
-            const publicRoom = fetchRooms['allUserRooms'].find((room) => room.name === 'public');
-            setSelectedRoom(publicRoom);
-            const getAllInvitations = await get({param: auth['user']._id}, `${baseUrl}/chat/all-invitations`);
-            const allInvitations = [...getAllInvitations['allInvitations']];
-            const invitations = allInvitations.filter((invitation) => invitation.to._id === auth['user']._id);
-            const requests = allInvitations.filter((invitation) => invitation.from._id === auth['user']._id);
-            setInvitations([...invitations]);
-            setRequests([...requests]);
-            navigate('/chat');
-            socket.connect();
-            socket.emit('join-rooms', auth['user']._id);
-        }
-    }
-
-    async function signupHandler(data) {
-        const auth = await post({
-            formData: data,
-        }, `${baseUrl}/signup`);
-        const {status, message} = auth;
-        showToast(status, message);
-        if (status === 200) {
-            navigate('/login');
-        }
-    }
-
-    function logout() {
-        setUser(null);
-        setToken(null);
-        sessionStorage.removeItem('userId');
-        sessionStorage.removeItem('token');
-    }
-
-    function closeBarAndNavigate(location) {
-        setShowNavBar(false);
-        navigate(location);
-    }
-
-    function chooseRoom(id) {
-        const chosenRoom = rooms.find((room) => room._id === id);
-        setSelectedRoom({...chosenRoom});
-        navigate('/chat');
-    }
-
-    function isRequestSentToUser(userId) {
-        return requests.find((request) => request.to._id === userId && request.status === 'PENDING' || request.status === 'ACCEPTED');
-    }
+    useInitializeUserDataHook();
+    useChatHook();
 
     return (
         <>
@@ -213,28 +60,7 @@ export function RootPage() {
                 </nav>
             </header>
             <main className="grow h-1 flex overflow-y-auto">
-                <Outlet context={
-                    {
-                        signupHandler: signupHandler,
-                        loginHandler: loginHandler,
-                        sendMessage: sendMessage,
-                        sendConnectRequest: sendConnectRequest,
-                        user: user,
-                        userNameConnect: userNameConnect,
-                        setUserNameConnect: setUserNameConnect,
-                        selectedRoom: selectedRoom,
-                        token: token,
-                        requests: requests,
-                        invalidRequest: invalidRequest,
-                        setInvalidRequest: setInvalidRequest,
-                        invalidRequestErrorMessage: invalidRequestErrorMessage,
-                        setInvalidRequestErrorMessage: setInvalidRequestErrorMessage,
-                        invitations: invitations,
-                        inputMessage: inputMessage,
-                        setInputMessage: setInputMessage,
-                        isRequestSentToUser: isRequestSentToUser,
-                    }
-                }/>
+                <Outlet/>
             </main>
         </>
     )

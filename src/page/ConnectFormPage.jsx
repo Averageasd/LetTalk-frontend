@@ -1,6 +1,7 @@
-import {useOutletContext} from "react-router-dom";
 import {get} from "../api/apiService.js";
 import {baseUrl} from "../shared/basedUrl.js";
+import {AppData} from "../context/AppContext.jsx";
+import {useContext} from "react";
 
 export function ConnectFormPage() {
 
@@ -15,7 +16,7 @@ export function ConnectFormPage() {
             invalidRequestErrorMessage,
             setInvalidRequestErrorMessage,
             isRequestSentToUser,
-        } = useOutletContext();
+        } = useContext(AppData);
     return (
         <section className="grow p-4">
             <form

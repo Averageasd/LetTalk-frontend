@@ -5,6 +5,8 @@ import {Link} from "react-router-dom";
 export function LoggedInUserLinks({user, closeBarAndNavigate, logout, rooms, selectedRoom, chooseRoom}) {
     const directMessageRooms = rooms.filter((room) => room.roomType === 'DIRECT-MESSAGE');
     const multiUserRooms = rooms.filter((room) => room.roomType === 'MULTIUSER');
+
+    console.log(directMessageRooms);
     return (
         <LinkContainer>
             <li className="flex gap-2 py-2">
