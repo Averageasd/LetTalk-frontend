@@ -8,7 +8,6 @@ import {AppData} from "../context/AppContext.jsx";
 import {useChatHook} from "../hook/chatHook.js";
 import {useInitializeUserDataHook} from "../hook/initializeUserDataHook.js";
 
-// import useChatHook from "../hook/chatHook.js";
 
 export function RootPage() {
     const {

@@ -2,6 +2,7 @@ import {useProtectAuthRoute} from "../hook/protectAuthRoute.js";
 import {useContext} from "react";
 import {AppData} from "../context/AppContext.jsx";
 import {IconEdit, IconTrash} from "@tabler/icons-react";
+import {socket} from "../api/socket.js";
 
 export function ChatPage() {
     useProtectAuthRoute();
@@ -18,9 +19,12 @@ export function ChatPage() {
                                 <p className="font-semibold">You</p>
                                 <p className="shadow-md bg-white p-2 rounded text-black">{message.message}</p>
                                 <div
-                                    className="flex justify-between p-1 rounded-sm border-solid border-0 border-b border-gray-100 w-[50px] bg-white absolute left-[calc(100%-50px)] top-[5%] h-auto">
+                                    className="flex justify-between p-1 rounded-sm border-solid border-0  border-b border-gray-100 w-[50px] bg-white/30 backdrop-blur-xl absolute left-[calc(100%-50px)] top-[5%] h-auto">
                                     <IconEdit className="w-[18px]"/>
-                                    <IconTrash className="w-[18px] text-red-500"/>
+                                    <IconTrash className="w-[18px] text-red-500" onClick={() => {
+                                        console.log('delete message ', message._id);
+                                        socket.emit('delete-message', message._id, selectedRoom._id);
+                                    }}/>
                                 </div>
                             </li>
                         } else {

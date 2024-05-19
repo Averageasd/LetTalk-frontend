@@ -60,11 +60,30 @@ export function useChatHook() {
                         socket.emit('join-rooms', user._id);
                     }
                 });
+
+                socket.on('delete-message', async (messageId, roomId) => {
+                    const getAllInvitations = await get({param: user._id}, `${baseUrl}/chat/all-invitations`);
+                    const allRooms = await get({param: user._id}, `${baseUrl}/chat/all-rooms`);
+                    const allInvitations = [...getAllInvitations['allInvitations']];
+                    const invitations = allInvitations.filter((invitation) => invitation.to._id === user._id);
+                    const requests = allInvitations.filter((invitation) => invitation.from._id === user._id);
+                    setInvitations([...invitations]);
+                    setRequests([...requests]);
+                    setRooms([...allRooms['allUserRooms']]);
+                    for (const room of allRooms['allUserRooms']) {
+                        if (room._id === selectedRoom._id) {
+                            console.log('selected room after delete message ', messageId, ' is ', room);
+                            setSelectedRoom({...room});
+                            break;
+                        }
+                    }
+                });
             }
             return () => {
                 socket.off('message');
                 socket.off('send-connect-request');
                 socket.off('connection-request-response');
+                socket.off('delete-message');
             }
         }
         , [user, rooms, selectedRoom, invitations, requests]);
