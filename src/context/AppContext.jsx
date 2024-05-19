@@ -1,4 +1,4 @@
-import {createContext, useEffect, useState} from "react";
+import {createContext, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {get, post} from "../api/apiService.js";
 import {baseUrl} from "../shared/basedUrl.js";

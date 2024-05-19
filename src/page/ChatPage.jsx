@@ -1,6 +1,7 @@
 import {useProtectAuthRoute} from "../hook/protectAuthRoute.js";
 import {useContext} from "react";
 import {AppData} from "../context/AppContext.jsx";
+import {IconEdit, IconTrash} from "@tabler/icons-react";
 
 export function ChatPage() {
     useProtectAuthRoute();
@@ -11,14 +12,21 @@ export function ChatPage() {
                 <ul className="grow overflow-y-auto flex flex-col gap-4 p-4">
                     {selectedRoom.messages.map((message) => {
                         if (message.user.name === user.name) {
-                            return <li className="flex flex-col gap-1 self-start w-[100%] text-black max-w-[400px]"
-                                       key={message._id}>
+                            return <li
+                                className="relative flex flex-col gap-1 self-start w-[100%] text-black max-w-[400px]"
+                                key={message._id}>
                                 <p className="font-semibold">You</p>
                                 <p className="shadow-md bg-white p-2 rounded text-black">{message.message}</p>
+                                <div
+                                    className="flex justify-between p-1 rounded-sm border-solid border-0 border-b border-gray-100 w-[50px] bg-white absolute left-[calc(100%-50px)] top-[5%] h-auto">
+                                    <IconEdit className="w-[18px]"/>
+                                    <IconTrash className="w-[18px] text-red-500"/>
+                                </div>
                             </li>
                         } else {
-                            return <li className="flex flex-col gap-1 self-end w-[100%] rounded text-black max-w-[400px]"
-                                       key={message._id}>
+                            return <li
+                                className="flex flex-col gap-1 self-end w-[100%] rounded text-black max-w-[400px]"
+                                key={message._id}>
                                 <p className="font-semibold">{message.user.name}</p>
                                 <p className="shadow-md bg-white p-2 rounded text-black">{message.message}</p>
                             </li>
@@ -37,7 +45,8 @@ export function ChatPage() {
                         setInputMessage('');
                     }
                 }}>
-                <input placeholder="Enter your message here (10000 chars max)..." name="message" value={inputMessage} maxLength={10000} type="text" onChange={(e) => {
+                <input placeholder="Enter your message here (10000 chars max)..." name="message" value={inputMessage}
+                       maxLength={10000} type="text" onChange={(e) => {
                     setInputMessage(e.target.value);
                 }} required={true}></input>
             </form>

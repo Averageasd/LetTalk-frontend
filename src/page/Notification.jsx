@@ -9,7 +9,7 @@ export function Notification() {
     console.log(requests, invitations);
     return (
         <section className="grow p-4 max-w-[600px] mx-auto">
-            {requests && <ul className="mt-4 overflow-y-auto">
+            {requests && <ul className="mt-4 overflow-y-auto flex flex-col gap-2">
                 {requests.map((request) => {
                     const status = request.status.toLowerCase();
                     let statusColor = 'text-amber-500';
@@ -29,7 +29,7 @@ export function Notification() {
                 })}
             </ul>}
 
-            {invitations && <ul className="mt-4 overflow-y-auto">
+            {invitations && <ul className="mt-4 overflow-y-auto flex flex-col gap-4">
                 {invitations.map((invitation) => {
                     const status = invitation.status.toLowerCase();
                     return (
@@ -37,13 +37,15 @@ export function Notification() {
                             {invitation.room.roomType === 'MULTIUSER' ?
                                 <p>{invitation.to.name} invited you to join {invitation.room.name}</p> :
                                 <p>{invitation.from.name} sent a connection request to you</p>}
-                            {status === 'pending' && <div className="flex gap-2 mt-2">
-                                <button className="bg-blue-500 p-1 border-0 text-white" onClick={() => {
-                                    socket.emit('connection-request-response', user._id, invitation.from._id, true, invitation._id);
-                                }}>Accept
-                                </button>
-                                <button className="border-1 p-1 bg-white border-solid border-blue-500">Decline</button>
-                            </div>}
+                            {status === 'pending'
+                                && <div className="flex gap-2 mt-2">
+                                    <button className="bg-blue-500 p-1 border-0 text-white" onClick={() => {
+                                        socket.emit('connection-request-response', user._id, invitation.from._id, true, invitation._id);
+                                    }}>Accept
+                                    </button>
+                                    <button className="border-1 p-1 bg-white border-solid border-blue-500">Decline
+                                    </button>
+                                </div>}
                         </li>
                     )
                 })}
