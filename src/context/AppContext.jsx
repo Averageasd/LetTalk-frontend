@@ -20,6 +20,7 @@ function AppProvider({children}) {
     const [userNameConnect, setUserNameConnect] = useState('');
     const [invalidRequest, setInvalidRequest] = useState(false);
     const [invalidRequestErrorMessage, setInvalidRequestErrorMessage] = useState('');
+    const [editingMessage, setEditingMessage] = useState(null);
 
     async function sendMessage(data, roomId) {
         socket.emit('message', user._id, data, roomId);
@@ -45,6 +46,12 @@ function AppProvider({children}) {
             setRooms(fetchRooms['allUserRooms']);
             const publicRoom = fetchRooms['allUserRooms'].find((room) => room.name === 'public');
             setSelectedRoom(publicRoom);
+            for (const message of publicRoom.messages) {
+                if (message.isEditing && message.user._id === user._id) {
+                    setEditingMessage({...message});
+                    setInputMessage(message.message);
+                }
+            }
             const getAllInvitations = await get({param: auth['user']._id}, `${baseUrl}/chat/all-invitations`);
             const allInvitations = [...getAllInvitations['allInvitations']];
             const invitations = allInvitations.filter((invitation) => invitation.to._id === auth['user']._id);
@@ -80,10 +87,29 @@ function AppProvider({children}) {
         navigate(location);
     }
 
-    function chooseRoom(id) {
+    async function chooseRoom(id) {
         const chosenRoom = rooms.find((room) => room._id === id);
         setSelectedRoom({...chosenRoom});
         navigate('/chat');
+
+        const fetchRooms = await get({param: user._id}, `${baseUrl}/chat/all-rooms`);
+        setRooms([...fetchRooms['allUserRooms']]);
+        const newSelectedRoom = fetchRooms['allUserRooms'].find((room) => room._id === id);
+        setSelectedRoom({...newSelectedRoom});
+        let foundEditingMessageInRoom = false;
+        for (const message of newSelectedRoom.messages) {
+            if (message.isEditing && message.user._id === user._id) {
+                setEditingMessage({...message});
+                setInputMessage(message.message);
+                foundEditingMessageInRoom = true;
+                break;
+            }
+        }
+
+        if (!foundEditingMessageInRoom) {
+            setEditingMessage(null);
+            setInputMessage('');
+        }
     }
 
     function isRequestSentToUser(userId) {
@@ -122,6 +148,8 @@ function AppProvider({children}) {
             setRooms: setRooms,
             showNavBar: showNavBar,
             setShowNavBar: setShowNavBar,
+            editingMessage: editingMessage,
+            setEditingMessage: setEditingMessage,
         }}>
             {children}
         </AppData.Provider>

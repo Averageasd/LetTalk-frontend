@@ -12,7 +12,9 @@ export function useInitializeUserDataHook() {
         setToken,
         setSelectedRoom,
         setInvitations,
-        setRequests
+        setRequests,
+        setEditingMessage,
+        setInputMessage,
     } = useContext(AppData);
 
     const navigate = useNavigate();
@@ -30,6 +32,12 @@ export function useInitializeUserDataHook() {
                 setToken(token);
                 const publicRoom = tempRooms['allUserRooms'].find((room) => room.name === 'public');
                 setSelectedRoom({...publicRoom});
+                for (const message of publicRoom.messages) {
+                    if (message.isEditing && message.user._id === user._id) {
+                        setEditingMessage({...message});
+                        setInputMessage(message.message);
+                    }
+                }
                 const getAllInvitations = await get({param: savedUserId}, `${baseUrl}/chat/all-invitations`);
                 const allInvitations = [...getAllInvitations['allInvitations']];
                 const invitations = allInvitations.filter((invitation) => invitation.to._id === savedUserId);
@@ -43,6 +51,7 @@ export function useInitializeUserDataHook() {
                 navigate('/login');
             }
         }
+
         setAuth();
     }, []);
 }

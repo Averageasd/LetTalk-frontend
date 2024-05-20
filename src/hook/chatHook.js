@@ -15,7 +15,11 @@ export function useChatHook() {
         setInvitations,
         rooms,
         requests,
-        setRequests
+        setRequests,
+        editingMessage,
+        setEditingMessage,
+        inputMessage,
+        setInputMessage
     } = useContext(AppData);
 
     useEffect(() => {
@@ -78,12 +82,59 @@ export function useChatHook() {
                         }
                     }
                 });
+
+                socket.on('change-message-to-edit', async (messageId, roomId, userId) => {
+                    if (user._id === userId) {
+                        const allRooms = await get({param: user._id}, `${baseUrl}/chat/all-rooms`);
+                        setRooms([...allRooms['allUserRooms']]);
+                        for (const room of allRooms['allUserRooms']) {
+                            if (room._id === selectedRoom._id) {
+                                setSelectedRoom({...room});
+                                for (const message of room.messages) {
+                                    if (message._id === messageId) {
+                                        setEditingMessage({...message});
+                                        console.log(message.message);
+                                        setInputMessage(message.message);
+                                        break;
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                    }
+                });
+
+                socket.on('edit-message', async (newMessage, messageId, roomId, userId) => {
+                    const allRooms = await get({param: user._id}, `${baseUrl}/chat/all-rooms`);
+                    setRooms([...allRooms['allUserRooms']]);
+                    console.log('edited message for ', messageId, ' is ', newMessage);
+                    for (const room of allRooms['allUserRooms']) {
+                        if (room._id === selectedRoom._id) {
+                            setSelectedRoom({...room});
+                            break;
+                        }
+                    }
+                });
+
+                socket.on('remove-edit-status', async (messageId, roomId, userId) => {
+                    const allRooms = await get({param: user._id}, `${baseUrl}/chat/all-rooms`);
+                    setRooms([...allRooms['allUserRooms']]);
+                    for (const room of allRooms['allUserRooms']) {
+                        if (room._id === selectedRoom._id) {
+                            setSelectedRoom({...room});
+                            break;
+                        }
+                    }
+                });
             }
             return () => {
                 socket.off('message');
                 socket.off('send-connect-request');
                 socket.off('connection-request-response');
                 socket.off('delete-message');
+                socket.off('change-message-to-edit');
+                socket.off('edit-message');
+                socket.off('remove-edit-status');
             }
         }
         , [user, rooms, selectedRoom, invitations, requests]);
