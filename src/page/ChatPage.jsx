@@ -22,20 +22,23 @@ export function ChatPage() {
                     {selectedRoom.messages.map((message) => {
                         if (message.user.name === user.name) {
                             return <li
-                                className="relative flex flex-col gap-1 self-start w-[100%] text-black max-w-[400px]"
+                                className={`relative flex flex-col gap-1 self-start w-[100%] text-black ${editingMessage && editingMessage.room === selectedRoom._id && `bg-slate-200 p-2`}`}
                                 key={message._id}>
-                                <p className="font-semibold">You</p>
-                                <p className="shadow-md bg-white p-2 rounded text-black">{message.message}</p>
-                                <div
-                                    className="flex justify-between p-1 rounded-sm border-solid border-0  border-b border-gray-100 w-[50px] bg-white/30 backdrop-blur-xl absolute left-[calc(100%-50px)] top-[5%] h-auto">
-                                    <IconEdit className="w-[18px]" onClick={() => {
-                                        socket.emit('change-message-to-edit', message._id, selectedRoom._id, user._id);
-                                    }}/>
-                                    <IconTrash className="w-[18px] text-red-500" onClick={() => {
-                                        console.log('delete message ', message._id);
-                                        socket.emit('delete-message', message._id, selectedRoom._id);
-                                    }}/>
+                                <div className="relative max-w-[400px]">
+                                    <p className="font-semibold">You</p>
+                                    <p className="shadow-md bg-white p-2 rounded text-black">{message.message}</p>
+                                    <div
+                                        className="flex justify-between p-1 rounded-sm border-solid border-0  border-b border-gray-100 w-[50px] bg-white/30 backdrop-blur-xl absolute left-[calc(100%-50px)] top-[5%] h-auto">
+                                        <IconEdit className="w-[18px]" onClick={() => {
+                                            socket.emit('change-message-to-edit', message._id, selectedRoom._id, user._id);
+                                        }}/>
+                                        <IconTrash className="w-[18px] text-red-500" onClick={() => {
+                                            console.log('delete message ', message._id);
+                                            socket.emit('delete-message', message._id, selectedRoom._id);
+                                        }}/>
+                                    </div>
                                 </div>
+
                             </li>
                         } else {
                             return <li
