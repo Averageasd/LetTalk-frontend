@@ -1,12 +1,10 @@
 import {LinkContainer} from "./LinkContainer.jsx";
-import {IconBell, IconLogout, IconServer, IconUser, IconUserPlus, IconUsersGroup} from "@tabler/icons-react";
+import {IconBell, IconLogout, IconPlus, IconServer, IconUser, IconUserPlus, IconUsersGroup} from "@tabler/icons-react";
 import {Link} from "react-router-dom";
 
 export function LoggedInUserLinks({user, closeBarAndNavigate, logout, rooms, selectedRoom, chooseRoom}) {
     const directMessageRooms = rooms.filter((room) => room.roomType === 'DIRECT-MESSAGE');
     const multiUserRooms = rooms.filter((room) => room.roomType === 'MULTIUSER');
-
-    console.log(directMessageRooms);
     return (
         <LinkContainer>
             <li className="flex gap-2 py-2">
@@ -32,6 +30,15 @@ export function LoggedInUserLinks({user, closeBarAndNavigate, logout, rooms, sel
                 <Link to='/connect'>Connect</Link>
             </li>
             <li
+                className="flex gap-2 py-2 hover:bg-blue-500 cursor-pointer"
+                onClick={() => {
+                    closeBarAndNavigate('/create-group');
+                }}
+            >
+                <IconPlus/>
+                <Link to="/create-group">Create group</Link>
+            </li>
+            <li
                 className="flex gap-2 py-2 cursor-pointer text-red-500"
                 onClick={() => {
                     closeBarAndNavigate('/signup');
@@ -41,7 +48,8 @@ export function LoggedInUserLinks({user, closeBarAndNavigate, logout, rooms, sel
                 <IconLogout/>
                 <Link className="text-red-500" to='/signup'>Logout</Link>
             </li>
-            <li className="py-2">
+
+            <li className="py-2 ">
                 <div className="flex gap-2">
                     <IconUsersGroup/>
                     <p>Direct message</p>

@@ -7,6 +7,7 @@ import {ChatPage} from "./page/ChatPage.jsx";
 import {Notification} from "./page/Notification.jsx";
 import {ConnectFormPage} from "./page/ConnectFormPage.jsx";
 import AppProvider from "./context/AppContext.jsx";
+import {CreatGroupPage} from "./page/CreatGroupPage.jsx";
 
 function App() {
     return (
@@ -19,6 +20,7 @@ function App() {
                     <Route path="/chat" element={<ChatPage/>}></Route>
                     <Route path="/notification" element={<Notification/>}></Route>
                     <Route path="/connect" element={<ConnectFormPage/>}></Route>
+                    <Route path="/create-group" element={<CreatGroupPage/>}></Route>
                 </Route>
             </Routes>
         </AppProvider>

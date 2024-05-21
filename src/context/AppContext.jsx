@@ -21,6 +21,8 @@ function AppProvider({children}) {
     const [invalidRequest, setInvalidRequest] = useState(false);
     const [invalidRequestErrorMessage, setInvalidRequestErrorMessage] = useState('');
     const [editingMessage, setEditingMessage] = useState(null);
+    const [newRoomName, setNewRoomName] = useState('');
+    const [invalidRoomName, setInvalidRoomName] = useState(false);
 
     async function sendMessage(data, roomId) {
         socket.emit('message', user._id, data, roomId);
@@ -116,6 +118,27 @@ function AppProvider({children}) {
         return requests.find((request) => request.to._id === userId && request.status === 'PENDING' || request.status === 'ACCEPTED');
     }
 
+    async function createNewGroup(data) {
+        const createGroup = await post({formData: data}, `${baseUrl}/chat/create-room`);
+        const {status, message} = createGroup;
+        showToast(status, message);
+        if (status === 200) {
+            setInvalidRoomName(false);
+            setNewRoomName('');
+            const allRooms = await get({param: user._id}, `${baseUrl}/chat/all-rooms`);
+            setRooms([...allRooms['allUserRooms']]);
+            for (const room of allRooms['allUserRooms']) {
+                if (selectedRoom && selectedRoom._id === room._id) {
+                    setSelectedRoom({...room});
+                    break;
+                }
+            }
+            socket.emit('join-rooms', user._id);
+        } else {
+            setInvalidRoomName(true);
+        }
+    }
+
     return (
         <AppData.Provider value={{
             signupHandler: signupHandler,
@@ -150,6 +173,11 @@ function AppProvider({children}) {
             setShowNavBar: setShowNavBar,
             editingMessage: editingMessage,
             setEditingMessage: setEditingMessage,
+            newRoomName: newRoomName,
+            setNewRoomName: setNewRoomName,
+            invalidRoomName: invalidRoomName,
+            setInvalidRoomName: setInvalidRoomName,
+            createNewGroup: createNewGroup,
         }}>
             {children}
         </AppData.Provider>

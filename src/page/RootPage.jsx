@@ -19,6 +19,11 @@ export function RootPage() {
         showNavBar,
         setShowNavBar,
         rooms,
+        newRoomName,
+        setNewRoomName,
+        invalidRoomName,
+        setInvalidRoomName,
+        createNewGroup,
     } = useContext(AppData);
 
     useInitializeUserDataHook();
@@ -30,7 +35,7 @@ export function RootPage() {
             {showNavBar &&
                 (
                     <section
-                        className="fixed bg-white left-0 top-0 shadow-lg z-[1000] h-[100vh] w-[90%] md:w-[450px]">
+                        className="fixed bg-white left-0 top-0 shadow-lg z-[1000] h-[100vh] w-[90%] md:w-[450px] overflow-y-auto">
                         <div className="flex justify-end p-4">
                             <IconSquareX className="cursor-pointer" onClick={() => {
                                 setShowNavBar(false);

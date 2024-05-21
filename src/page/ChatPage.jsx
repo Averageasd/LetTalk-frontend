@@ -22,7 +22,7 @@ export function ChatPage() {
                     {selectedRoom.messages.map((message) => {
                         if (message.user.name === user.name) {
                             return <li
-                                className={`relative flex flex-col gap-1 self-start w-[100%] text-black ${editingMessage && editingMessage.room === selectedRoom._id && `bg-slate-200 p-2`}`}
+                                className={`relative flex flex-col gap-1 self-start w-[100%] text-black ${editingMessage && message._id === editingMessage._id && editingMessage.room === selectedRoom._id && `bg-slate-200 p-2`}`}
                                 key={message._id}>
                                 <div className="relative max-w-[400px]">
                                     <p className="font-semibold">You</p>

@@ -33,7 +33,7 @@ export function useInitializeUserDataHook() {
                 const publicRoom = tempRooms['allUserRooms'].find((room) => room.name === 'public');
                 setSelectedRoom({...publicRoom});
                 for (const message of publicRoom.messages) {
-                    if (message.isEditing && message.user._id === user._id) {
+                    if (message.isEditing && message.user._id === userWithId._id) {
                         setEditingMessage({...message});
                         setInputMessage(message.message);
                     }
