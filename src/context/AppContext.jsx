@@ -23,6 +23,7 @@ function AppProvider({children}) {
     const [editingMessage, setEditingMessage] = useState(null);
     const [newRoomName, setNewRoomName] = useState('');
     const [invalidRoomName, setInvalidRoomName] = useState(false);
+    const [friendList, setFriendList] = useState([]);
 
     async function sendMessage(data, roomId) {
         socket.emit('message', user._id, data, roomId);
@@ -114,6 +115,11 @@ function AppProvider({children}) {
         }
     }
 
+    async function getFriendList() {
+        const allFriends = await get({param: user._id}, `${baseUrl}/chat/all-friends`);
+        console.log(allFriends);
+    }
+
     function isRequestSentToUser(userId) {
         return requests.find((request) => request.to._id === userId && request.status === 'PENDING' || request.status === 'ACCEPTED');
     }
@@ -178,6 +184,7 @@ function AppProvider({children}) {
             invalidRoomName: invalidRoomName,
             setInvalidRoomName: setInvalidRoomName,
             createNewGroup: createNewGroup,
+            getFriendList: getFriendList,
         }}>
             {children}
         </AppData.Provider>

@@ -24,6 +24,7 @@ export function RootPage() {
         invalidRoomName,
         setInvalidRoomName,
         createNewGroup,
+        getFriendList,
     } = useContext(AppData);
 
     useInitializeUserDataHook();
@@ -48,7 +49,9 @@ export function RootPage() {
                                 logout={logout}
                                 rooms={rooms}
                                 selectedRoom={selectedRoom}
-                                chooseRoom={chooseRoom}/> :
+                                chooseRoom={chooseRoom}
+                                getFriendList={getFriendList}
+                            /> :
                             <AuthLinks closeBarAndNavigate={closeBarAndNavigate}/>}
                     </section>
                 )

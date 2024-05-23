@@ -1,8 +1,17 @@
 import {LinkContainer} from "./LinkContainer.jsx";
-import {IconBell, IconLogout, IconPlus, IconServer, IconUser, IconUserPlus, IconUsersGroup} from "@tabler/icons-react";
+import {
+    IconBell,
+    IconLogout,
+    IconPlus,
+    IconServer,
+    IconSocial,
+    IconUser,
+    IconUserPlus,
+    IconUsersGroup
+} from "@tabler/icons-react";
 import {Link} from "react-router-dom";
 
-export function LoggedInUserLinks({user, closeBarAndNavigate, logout, rooms, selectedRoom, chooseRoom}) {
+export function LoggedInUserLinks({user, closeBarAndNavigate, logout, rooms, selectedRoom, chooseRoom, getFriendList}) {
     const directMessageRooms = rooms.filter((room) => room.roomType === 'DIRECT-MESSAGE');
     const multiUserRooms = rooms.filter((room) => room.roomType === 'MULTIUSER');
     return (
@@ -37,6 +46,20 @@ export function LoggedInUserLinks({user, closeBarAndNavigate, logout, rooms, sel
             >
                 <IconPlus/>
                 <Link to="/create-group">Create group</Link>
+            </li>
+            <li
+                className="flex gap-2 py-2 hover:bg-blue-500 cursor-pointer"
+                onClick={() => {
+                    closeBarAndNavigate('/invite');
+                    getFriendList();
+                }}
+            >
+                <IconSocial/>
+                <Link to="/invite" onClick={() => {
+                    getFriendList();
+                }}>
+                    Invite
+                </Link>
             </li>
             <li
                 className="flex gap-2 py-2 cursor-pointer text-red-500"
