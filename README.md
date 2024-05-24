@@ -14,11 +14,10 @@ Still under development. However, it is usable and fully functioning.
 
 ## In progress features:
 
--[ ] Implement leave and delete room features.
--[ ] Implement unfriend feature.
--[ ] Implement notification delete feature.
--[ ] Improve UI.
--[ ] Refactor the codebase.
-- 
+- [ ] Implement leave and delete room features.
+- [ ] Implement unfriend feature.
+- [ ] Implement notification delete feature.
+- [ ] Improve UI.
+- [ ] Refactor the codebase.
 
 
