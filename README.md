@@ -1,8 +1,24 @@
-# React + Vite
+## About
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Instant messaging platform that has all modern features of a standard real time chat app: Instant messaging,
+notification system, request-response acceptance and creation
+mechanism and more. This app is a proof of concept project where the app developer's goal was to experiment with Socket.IO
+library and implement the real-time messaging using this library.
+## Tech stack:
 
-Currently, two official plugins are available:
+Javascript, React, Mongoose, MongoDB, ExpressJS, NodeJS, TailwindCSS.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Project status:
+
+Still under development. However, it is usable and fully functioning.
+
+## In progress features:
+
+-[ ] Implement leave and delete room features.
+-[ ] Implement unfriend feature.
+-[ ] Implement notification delete feature.
+-[ ] Improve UI.
+-[ ] Refactor the codebase.
+- 
+
+
