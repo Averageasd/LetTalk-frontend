@@ -40,7 +40,11 @@ export function Notification() {
                             {status === 'pending'
                                 && <div className="flex gap-2 mt-2">
                                     <button className="bg-blue-500 p-1 border-0 text-white" onClick={() => {
-                                        socket.emit('connection-request-response', user._id, invitation.from._id, true, invitation._id);
+                                        if (invitation.room.roomType === 'DIRECT-MESSAGE') {
+                                            socket.emit('connection-request-response', user._id, invitation.from._id, true, invitation._id);
+                                        } else {
+                                            socket.emit('invitation-request-response', user._id, invitation.from._id, true, invitation._id);
+                                        }
                                     }}>Accept
                                     </button>
                                     <button className="border-1 p-1 bg-white border-solid border-blue-500">Decline

@@ -49,7 +49,18 @@ export function useChatHook() {
                         setInvitations([...invitations]);
                         setRequests([...requests]);
                     }
-                })
+                });
+
+                socket.on('send-invitation-request', async (from, to, roomId)=>{
+                    if (from === user._id || to === user._id) {
+                        const getAllInvitations = await get({param: user._id}, `${baseUrl}/chat/all-invitations`);
+                        const allInvitations = [...getAllInvitations['allInvitations']];
+                        const invitations = allInvitations.filter((invitation) => invitation.to._id === user._id);
+                        const requests = allInvitations.filter((invitation) => invitation.from._id === user._id);
+                        setInvitations([...invitations]);
+                        setRequests([...requests]);
+                    }
+                });
 
                 socket.on('connection-request-response', async (userId, toUserId, accept, invitationId) => {
                     if (userId === user._id || toUserId === user._id) {
@@ -64,6 +75,20 @@ export function useChatHook() {
                         socket.emit('join-rooms', user._id);
                     }
                 });
+
+                socket.on('invitation-request-response',  async (from, to, accept, invitationId)=>{
+                    if (from === user._id || to === user._id) {
+                        const getAllInvitations = await get({param: user._id}, `${baseUrl}/chat/all-invitations`);
+                        const allRooms = await get({param: user._id}, `${baseUrl}/chat/all-rooms`);
+                        const allInvitations = [...getAllInvitations['allInvitations']];
+                        const invitations = allInvitations.filter((invitation) => invitation.to._id === user._id);
+                        const requests = allInvitations.filter((invitation) => invitation.from._id === user._id);
+                        setInvitations([...invitations]);
+                        setRequests([...requests]);
+                        setRooms([...allRooms['allUserRooms']]);
+                        socket.emit('join-rooms', user._id);
+                    }
+                })
 
                 socket.on('delete-message', async (messageId, roomId) => {
                     const getAllInvitations = await get({param: user._id}, `${baseUrl}/chat/all-invitations`);
@@ -135,6 +160,8 @@ export function useChatHook() {
                 socket.off('change-message-to-edit');
                 socket.off('edit-message');
                 socket.off('remove-edit-status');
+                socket.off('send-invitation-request');
+                socket.off('invitation-request-response');
             }
         }
         , [user, rooms, selectedRoom, invitations, requests]);

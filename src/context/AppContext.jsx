@@ -29,6 +29,7 @@ function AppProvider({children}) {
     const [roomToInvite, setRoomToInvite] = useState(null);
     const [isRequestBtnActive, setIsRequestBtnActive] = useState(false);
     const [selectedFriend, setSelectedFriend] = useState(null);
+    const [invalidInvitation, setInvalidInvitation] = useState(false);
 
     async function sendMessage(data, roomId) {
         socket.emit('message', user._id, data, roomId);
@@ -215,6 +216,8 @@ function AppProvider({children}) {
             setIsRequestBtnActive: setIsRequestBtnActive,
             selectedFriend: selectedFriend,
             setSelectedFriend: setSelectedFriend,
+            invalidInvitation: invalidInvitation,
+            setInvalidInvitation: setInvalidInvitation,
         }}>
             {children}
         </AppData.Provider>

@@ -1,6 +1,8 @@
 import {useContext} from "react";
 import {AppData} from "../context/AppContext.jsx";
 import {socket} from "../api/socket.js";
+import {baseUrl} from "../shared/basedUrl.js";
+import {get} from "../api/apiService.js";
 
 export function InvitePage() {
     const {
@@ -18,6 +20,8 @@ export function InvitePage() {
         setIsRequestBtnActive,
         selectedFriend,
         setSelectedFriend,
+        invalidInvitation,
+        setInvalidInvitation,
     } = useContext(AppData);
 
     if (friendList) {
@@ -29,7 +33,7 @@ export function InvitePage() {
                     <ul className="flex flex-col gap-2">
                         {roomsFriendNotIn.map((room) => {
                             return (
-                                <li className={`p-3 bg-gray-100 ${(roomToInvite && roomToInvite._id === room._id) && `text-white bg-blue-400`}`}
+                                <li className={`p-3 ${(roomToInvite && roomToInvite._id === room._id) ? `text-white bg-blue-500` : `bg-gray-100`}`}
                                     key={room._id} onClick={() => {
                                     if (roomToInvite) {
                                         console.log(roomToInvite._id, room._id, roomToInvite._id === room._id);
@@ -42,15 +46,35 @@ export function InvitePage() {
                             )
                         })}
                     </ul>
-                    <button disabled={!isRequestBtnActive} className="bg-blue-500" onClick={() => {
-                        setIsRequestBtnActive(false);
-                        socket.emit('send-invitation-request', user._id, selectedFriend._id,roomToInvite._id);
-                    }}>Confirm
-                    </button>
-                    <button onClick={() => {
-                        setIsRequestBtnActive(false);
-                    }}>Cancel
-                    </button>
+                    <div className="mt-2">
+                        <button disabled={!isRequestBtnActive} className="bg-blue-500 p-1 text-white border-0 "
+                                onClick={async () => {
+                                    setIsRequestBtnActive(false);
+                                    const getAllInvitationForFriend = await get({param: selectedFriend._id}, `${baseUrl}/chat/all-invitations`);
+                                    const allInvitations = getAllInvitationForFriend['allInvitations'];
+                                    const isRoomInvitationCreated = allInvitations.find((invitation) => invitation.room._id === roomToInvite._id);
+                                    if (!isRoomInvitationCreated) {
+                                        socket.emit('send-invitation-request', user._id, selectedFriend._id, roomToInvite._id);
+                                        setInvalidInvitation(false);
+                                        setShowInviteRoomModal(false);
+                                        setSelectedFriend(null);
+                                        setRoomToInvite(null);
+                                    } else {
+                                        setInvalidInvitation(true);
+                                    }
+                                }}>Confirm
+                        </button>
+                        <button className="border-0 p-1 ml-1" onClick={() => {
+                            setIsRequestBtnActive(false);
+                            setShowInviteRoomModal(false);
+                            setSelectedFriend(null);
+                            setRoomToInvite(null);
+                            setInvalidInvitation(false);
+                        }}>Cancel
+                        </button>
+                        {invalidInvitation && <p>User is in room already</p>}
+                    </div>
+
                 </div>}
                 <ul className="flex flex-col gap-2 mx-auto max-w-[850px] py-4 bg-white">
                     {friendList.map((friend) => {
