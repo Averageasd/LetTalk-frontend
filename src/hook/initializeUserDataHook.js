@@ -15,6 +15,8 @@ export function useInitializeUserDataHook() {
         setRequests,
         setEditingMessage,
         setInputMessage,
+        friendList,
+        setFriendList,
     } = useContext(AppData);
 
     const navigate = useNavigate();
@@ -44,6 +46,8 @@ export function useInitializeUserDataHook() {
                 const requests = allInvitations.filter((invitation) => invitation.from._id === savedUserId);
                 setInvitations([...invitations]);
                 setRequests([...requests]);
+                const getAllFriends = await get({param: savedUserId}, `${baseUrl}/chat/all-friends`);
+                setFriendList([...getAllFriends['allFriends']]);
                 socket.connect();
                 socket.emit('join-rooms', savedUserId);
                 navigate('/chat');

@@ -49,14 +49,14 @@ export function LoggedInUserLinks({user, closeBarAndNavigate, logout, rooms, sel
             </li>
             <li
                 className="flex gap-2 py-2 hover:bg-blue-500 cursor-pointer"
-                onClick={() => {
+                onClick={async () => {
+                    await getFriendList();
                     closeBarAndNavigate('/invite');
-                    getFriendList();
                 }}
             >
                 <IconSocial/>
-                <Link to="/invite" onClick={() => {
-                    getFriendList();
+                <Link to="/invite" onClick={async () => {
+                    await getFriendList();
                 }}>
                     Invite
                 </Link>

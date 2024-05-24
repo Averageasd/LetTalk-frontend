@@ -24,6 +24,11 @@ function AppProvider({children}) {
     const [newRoomName, setNewRoomName] = useState('');
     const [invalidRoomName, setInvalidRoomName] = useState(false);
     const [friendList, setFriendList] = useState([]);
+    const [roomsFriendNotIn, setRoomsFriendNotIn] = useState([]);
+    const [showInviteRoomModal, setShowInviteRoomModal] = useState(false);
+    const [roomToInvite, setRoomToInvite] = useState(null);
+    const [isRequestBtnActive, setIsRequestBtnActive] = useState(false);
+    const [selectedFriend, setSelectedFriend] = useState(null);
 
     async function sendMessage(data, roomId) {
         socket.emit('message', user._id, data, roomId);
@@ -61,6 +66,8 @@ function AppProvider({children}) {
             const requests = allInvitations.filter((invitation) => invitation.from._id === auth['user']._id);
             setInvitations([...invitations]);
             setRequests([...requests]);
+            const getAllFriends = await get({param: auth['user']._id}, `${baseUrl}/chat/all-friends`);
+            setFriendList([...getAllFriends['allFriends']]);
             navigate('/chat');
             socket.connect();
             socket.emit('join-rooms', auth['user']._id);
@@ -90,6 +97,16 @@ function AppProvider({children}) {
         navigate(location);
     }
 
+    async function getRoomsOfFriendNotIn(friendId) {
+        const allRoomsOfFriend = await get({param: friendId}, `${baseUrl}/chat/all-rooms`);
+        const roomsOfFriend = allRoomsOfFriend['allUserRooms'];
+        const roomsOfCurUser = [...rooms];
+        const roomNamesOfFriend = new Set(roomsOfFriend.map((room) => room.name));
+        const roomsOfFriendNotIn = roomsOfCurUser.filter((room) => room.roomType === 'MULTIUSER' && !roomNamesOfFriend.has(room.name));
+        console.log(roomsOfFriendNotIn);
+        setRoomsFriendNotIn([...roomsOfFriendNotIn].filter((room) => room.roomType === "MULTIUSER"));
+    }
+
     async function chooseRoom(id) {
         const chosenRoom = rooms.find((room) => room._id === id);
         setSelectedRoom({...chosenRoom});
@@ -117,7 +134,7 @@ function AppProvider({children}) {
 
     async function getFriendList() {
         const allFriends = await get({param: user._id}, `${baseUrl}/chat/all-friends`);
-        console.log(allFriends);
+        setFriendList([...allFriends['allFriends']]);
     }
 
     function isRequestSentToUser(userId) {
@@ -184,7 +201,20 @@ function AppProvider({children}) {
             invalidRoomName: invalidRoomName,
             setInvalidRoomName: setInvalidRoomName,
             createNewGroup: createNewGroup,
+            friendList: friendList,
+            setFriendList: setFriendList,
             getFriendList: getFriendList,
+            getRoomsOfFriendNotIn: getRoomsOfFriendNotIn,
+            roomsFriendNotIn: roomsFriendNotIn,
+            setRoomsFriendNotIn: setRoomsFriendNotIn,
+            showInviteRoomModal: showInviteRoomModal,
+            setShowInviteRoomModal: setShowInviteRoomModal,
+            roomToInvite: roomToInvite,
+            setRoomToInvite: setRoomToInvite,
+            isRequestBtnActive: isRequestBtnActive,
+            setIsRequestBtnActive: setIsRequestBtnActive,
+            selectedFriend: selectedFriend,
+            setSelectedFriend: setSelectedFriend,
         }}>
             {children}
         </AppData.Provider>

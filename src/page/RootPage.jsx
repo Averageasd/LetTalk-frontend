@@ -19,12 +19,14 @@ export function RootPage() {
         showNavBar,
         setShowNavBar,
         rooms,
+        getFriendList,
+        friendList,
+        setFriendlist,
         newRoomName,
         setNewRoomName,
         invalidRoomName,
         setInvalidRoomName,
         createNewGroup,
-        getFriendList,
     } = useContext(AppData);
 
     useInitializeUserDataHook();
