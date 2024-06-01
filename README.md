@@ -6,7 +6,7 @@ mechanism and more. This app is a proof of concept project where the app develop
 library and implement the real-time messaging using this library.
 
 ## Demo
-![Demo](C://Users\nhuyn\webdev\odin\projects\let-talk\LetTalk-frontend\LetTalkDemo.gif)
+![Demo](LetTalkDemo.gif)
 
 ## Tech stack:
 
